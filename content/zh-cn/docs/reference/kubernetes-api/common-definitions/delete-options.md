@@ -67,6 +67,23 @@ DeleteOptions may be provided when deleting an API object.
   值必须是非负整数。零值表示立即删除。如果此值为 `nil`，则将使用指定类型的默认宽限期。如果未指定，则为每个对象的默认值。
 
 <!--
+- **ignoreStoreReadErrorWithClusterBreakingPotential** (boolean)
+
+  if set to true, it will trigger an unsafe deletion of the resource in case the normal deletion flow fails with a corrupt object error. A resource is considered corrupt if it can not be retrieved from the underlying storage successfully because of a) its data can not be transformed e.g. decryption failure, or b) it fails to decode into an object. NOTE: unsafe deletion ignores finalizer constraints, skips precondition checks, and removes the object from the storage. WARNING: This may potentially break the cluster if the workload associated with the resource being unsafe-deleted relies on normal deletion flow. Use only if you REALLY know what you are doing. The default value is false, and the user must opt in to enable it
+-->
+- **ignoreStoreReadErrorWithClusterBreakingPotential** (boolean)
+
+  如果该值被设置为 `true`，则当正常的删除流程因对象损坏错误而失败时，
+  将触发对资源的**非安全删除（unsafe deletion）**。
+  当资源无法从底层存储成功检索时，视为资源已损坏，其可能的原因包括：
+  a）其数据无法被转换，例如解密失败；
+  b）无法解码为对象。
+
+  **注意：** 非安全删除会忽略 Finalizer 约束，跳过前置条件检查，并直接将对象从存储中移除。
+  **警告：** 如果与该资源关联的工作负载依赖于正常的删除流程，则此操作可能会破坏整个集群。
+  **仅当你非常确定你在做什么时才使用该选项。**
+
+<!--
 - **kind** (string)
 
   Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
